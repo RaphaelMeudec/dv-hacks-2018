@@ -61,8 +61,25 @@ def plot_im(im, mode='gray'):
     plt.imshow(im, cmap=mode)
     plt.show()
 
-def get_crop_pothole(im_atlas='positive_data/G0020199.JPG'):
+def get_crop_pothole(im_atlas='positive_data/G0020199.JPG', crop_x=(1700,1800), crop_y=(2600,2850)):
+    """crop image.
+
+    Parameters
+    ----------
+    im_atlas : str
+        image path to crop.
+    crop_x : tuple
+        index of x coordinates.
+    crop_y : tuple
+        index of y coordinates.
+
+    Returns
+    -------
+    np.array
+        crop image.
+
+    """
     im = read_im(im_atlas, src='/Users/mohcine/pm/Zamohra/data/', mode='train')
     im = rgb2gray(im)
-    ndp = im[1700:1800, 2600:2850]
+    ndp = im[crop_x[0]:crop_x[1], crop_y[0]:crop_y[1]]
     return ndp
