@@ -19,7 +19,7 @@ def read_im(im_path, src='/Users/mohcine/pm/Zamohra/data/', mode='train'):
         numpy array of the image.
 
     """
-    im_path_ = src + mode + '/' + im
+    im_path_ = src + mode + '/' + im_path
     im = imread(im_path_).astype(np.float32)
     return im
 
