@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.misc import imread
 
-def read_im(im, src='/Users/mohcine/pm/Zamohra/data/', mode='train'):
+def read_im(im_path, src='/Users/mohcine/pm/Zamohra/data/', mode='train'):
     """Reading images from em path.
 
     Parameters
@@ -19,6 +19,6 @@ def read_im(im, src='/Users/mohcine/pm/Zamohra/data/', mode='train'):
         numpy array of the image.
 
     """
-    im_path = src + mode + '/' + im
-    im = imread(src).astype(np.float32)
+    im_path_ = src + mode + '/' + im
+    im = imread(im_path_).astype(np.float32)
     return im
