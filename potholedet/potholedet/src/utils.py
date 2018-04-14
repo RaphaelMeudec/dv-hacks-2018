@@ -2,6 +2,7 @@ import numpy as np
 from scipy.misc import imread
 import matplotlib.pyplot as plt
 import cv2
+import pandas as pd
 
 def read_im(im_path):
     """Reading images from em path.
@@ -21,7 +22,7 @@ def read_im(im_path):
         numpy array of the image.
 
     """
-    im = imread(im_path).astype(np.float32)
+    im = cv2.imread(im_path)
     return im
 
 def rgb2gray(im):
@@ -134,3 +135,7 @@ def medianblur_transform(im):
     """
     im_mblur = cv2.medianBlur(im,5)
     return im_mblur
+
+def get_score(im):
+
+    return score
