@@ -3,8 +3,13 @@
   vertical-align: middle;
   height: 60px;
 }
+
 .main-menu h1 {
   line-height: 60px;
   background-color: #000;
   color: white;
+}
+
+.switch-view-button {
+  float: left;
 }
