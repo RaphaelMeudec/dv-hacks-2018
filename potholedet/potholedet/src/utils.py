@@ -1,8 +1,9 @@
 import numpy as np
 from scipy.misc import imread
 import matplotlib.pyplot as plt
+import cv2
 
-def read_im(im_path, src='/Users/mohcine/pm/Zamohra/data/', mode='train'):
+def read_im(im_path):
     """Reading images from em path.
 
     Parameters
@@ -20,8 +21,7 @@ def read_im(im_path, src='/Users/mohcine/pm/Zamohra/data/', mode='train'):
         numpy array of the image.
 
     """
-    im_path_ = src + mode + '/' + im_path
-    im = imread(im_path_).astype(np.float32)
+    im = imread(im_path).astype(np.float32)
     return im
 
 def rgb2gray(im):
@@ -61,7 +61,7 @@ def plot_im(im, mode='gray'):
     plt.imshow(im, cmap=mode)
     plt.show()
 
-def get_crop_pothole(im_atlas='positive_data/G0020199.JPG', crop_x=(1700,1800), crop_y=(2600,2850)):
+def get_crop_pothole(im_atlas='positive_data/G0011595.JPG', crop_x=(1700,1800), crop_y=(2600,2850)):
     """crop image.
 
     Parameters
@@ -83,3 +83,11 @@ def get_crop_pothole(im_atlas='positive_data/G0020199.JPG', crop_x=(1700,1800), 
     im = rgb2gray(im)
     ndp = im[crop_x[0]:crop_x[1], crop_y[0]:crop_y[1]]
     return ndp
+
+def gaussianblur_transform(im):
+    gblur = cv2.GaussianBlur(im,(5,5),0)
+    return gblur
+
+def canny_transform(im):
+    im_edge = cv2.Canny(im,9,220)
+    return im_edge
