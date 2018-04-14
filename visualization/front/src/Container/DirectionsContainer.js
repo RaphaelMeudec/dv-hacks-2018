@@ -4,6 +4,8 @@ import L from 'leaflet';
 
 const gmaps = window.google.maps;
 const bcgDVCoordinates = [33.9008624,-118.394406];
+const laxCoordinates = [33.943574, -118.408165];
+const centerCoordinates = bcgDVCoordinates.map((val, index) => (val + laxCoordinates[index])/2);
 
 const flatten = array =>
 	Array.prototype.concat.apply([], array);
@@ -43,14 +45,14 @@ class DirectionsContainer extends React.Component {
 			waypoints: [],
 			positions: [
 				[
-					[33.9008624, -118.394406],
-					[33.9008624, -118.414406]
+					bcgDVCoordinates,
+					laxCoordinates
 				]
 			]
 		};
   }
 
-	componentWillMount(){
+	componentDidMount(){
 		this.getDirections([]);
 	}
 
@@ -78,7 +80,6 @@ class DirectionsContainer extends React.Component {
 				//those keys are linked to gmaps api v3.28.19. You can reverse-engineer any version by using a DirectionsRenderer
 			}
 		};
-		console.log(request);
 		const directionsService = new gmaps.DirectionsService();
 		directionsService.route(request, (response, status) => {
 			if (status === gmaps.DirectionsStatus.OK) {
@@ -95,16 +96,10 @@ class DirectionsContainer extends React.Component {
 		const flattenPositions = flatten(positions);
 		const bounds = L.latLngBounds(flattenPositions);
 
-		const styles = {
-			map: {
-				height: '300px'
-			}
-		};
-
     return (
       <div className="container">
         <div id="map">
-          <Map center={bcgDVCoordinates} zoom={14}>
+          <Map center={centerCoordinates} zoom={14}>
             <TileLayer
               url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -118,7 +113,9 @@ class DirectionsContainer extends React.Component {
           </Map>
         </div>
         <div className='viewer'>
-          <h2>Hello</h2>
+          <h2>Road Analysis</h2>
+          <p>Departure: BCG Digital Ventures</p>
+          <p>Arrival: LAX International Airport</p>
         </div>
       </div>
     )
