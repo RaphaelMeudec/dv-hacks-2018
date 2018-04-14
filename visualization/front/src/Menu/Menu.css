@@ -1,0 +1,9 @@
+.main-menu {
+  text-align: center;
+  vertical-align: middle;
+  height: 50px;
+  background-color: #000;
+}
+.main-menu h1 {
+  color: white;
+}
