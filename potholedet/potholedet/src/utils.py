@@ -85,13 +85,52 @@ def get_crop_pothole(im_atlas='positive_data/G0011595.JPG', crop_x=(1700,1800), 
     return ndp
 
 def gaussianblur_transform(im):
+    """apply gaussian blur on the image.
+
+    Parameters
+    ----------
+    im : np.array
+        original image.
+
+    Returns
+    -------
+    np.array
+        image with blur.
+
+    """
     im_gblur = cv2.GaussianBlur(im,(5,5),0)
     return im_gblur
 
 def canny_transform(im):
+    """Apply canny filters.
+
+    Parameters
+    ----------
+    im : np.array
+        Original image.
+
+    Returns
+    -------
+    np.array
+        image with canny contours.
+
+    """
     im_edge = cv2.Canny(im,9,220)
     return im_edge
 
 def medianblur_transform(im):
+    """Apply median blur to image.
+
+    Parameters
+    ----------
+    im : np.array
+        Original image.
+
+    Returns
+    -------
+    np.array
+        image with median blur.
+
+    """
     im_mblur = cv2.medianBlur(im,5)
     return im_mblur
