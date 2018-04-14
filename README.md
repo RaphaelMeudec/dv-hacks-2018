@@ -5,4 +5,4 @@
 
 Our project is decomposed into different parts. Learn more about those parts with the following docs:
 
-- [Client Application]('./visualization/README.md')
+- [Client Application](https://github.com/RaphaelMeudec/dv-hacks-2018/tree/master/visualization)

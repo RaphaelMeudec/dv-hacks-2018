@@ -1,4 +1,4 @@
-# Visualization
+# Visualization
 
 This directory tackles with client-side rendering. There are two parts for this task:
 - distributing the stored data -- Flask API, SQLAlchemy
