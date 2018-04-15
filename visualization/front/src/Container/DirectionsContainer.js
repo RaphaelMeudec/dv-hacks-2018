@@ -6,10 +6,12 @@ import axios from 'axios';
 import LeafletCircle from './LeafletCircle';
 import { distance } from '../util';
 
+import './DirectionsContainer.css';
+
 const gmaps = window.google.maps;
 
-const startCoordinates = [41.0978156,-80.6790504];
-const endCoordinates = [41.0974208,-80.6798627];
+const startCoordinates = [41.0976809,-80.6809661];
+const endCoordinates = [41.0978156,-80.6790504];
 
 const centerCoordinates = startCoordinates.map((val, index) => (val + endCoordinates[index])/2);
 
@@ -148,6 +150,16 @@ class DirectionsContainer extends React.Component {
 		return this.state.alongTheRoadMarkers.filter(marker => marker.score < 0.1).length / this.state.alongTheRoadMarkers.length;
 	}
 
+	getColor(score) {
+    if (score > 1) {
+      return "#ED4337";
+    } else if (score > 0) {
+      return "orange";
+    } else {
+      return "#44c767";
+    }
+  }
+
   render() {
     const { positions } = this.state;
 		const flattenPositions = flatten(positions);
@@ -155,7 +167,7 @@ class DirectionsContainer extends React.Component {
     return (
       <div className="container">
         <div id="map">
-          <Map center={centerCoordinates} zoom={16}>
+          <Map center={centerCoordinates} zoom={18}>
             <TileLayer
               url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -163,8 +175,8 @@ class DirectionsContainer extends React.Component {
             <Polyline
     					positions={flattenPositions}
     					color={'black'}
-    					weight={10}
-    					opacity={0.5}
+    					weight={15}
+    					opacity={0.9}
     				/>
 						<Circle
 							center={startCoordinates}
@@ -191,30 +203,80 @@ class DirectionsContainer extends React.Component {
 						{
               this.state.markers.map((marker, index) => {
 								const position = [marker.latitude, marker.longitude];
+								const color = this.getColor(marker.score);
                 return (
                   <LeafletCircle
 										key={index}
-                    color={"red"}
+                    color={color}
                     isDisplay={true}
-                    fillColor={"red"}
+                    fillColor={color}
                     marker={position}
-										radius={10}
+										radius={7}
                   />
                 )
               })
-            }arker=
+            }
 						/>
           </Map>
         </div>
         <div className='viewer'>
-          <h2>Road Analysis</h2>
-          <p>Departure: BCG Digital Ventures</p>
-          <p>Arrival: LAX International Airport</p>
-					<p>Road Quality: {
-						this.existsEnoughData()
-						? this.getRoadQuality()
-						: 'Not enough data to assess the road quality.'
-					}</p>
+					<div className='directions'>
+          	<h2>Road Analysis</h2>
+						<div className='direction'>
+							<p class='title'>Departure</p>
+							<p>220-298 Milton Ave, Youngstown Ohio</p>
+						</div>
+						<div className='direction'>
+							<p class='title'>Arrival</p>
+							<p>Calvary Run Dr, Youngstown Ohio</p>
+						</div>
+					</div>
+					<div className='mechanical-prediction'>
+						<h2>Road Quality: {
+							this.existsEnoughData()
+							? this.getRoadQuality()
+							: 'Not enough data to assess the road quality.'
+						}</h2>
+						<div className="mechanical-parts">
+							<div className="before">
+								<div className="mechanical-part">
+									<h3>Tires</h3>
+									<span>51</span>
+								</div>
+								<div className="mechanical-part">
+									<h3>Shock Absorber</h3>
+									<span>25</span>
+								</div>
+								<div className="mechanical-part">
+									<h3>Engine</h3>
+									<span>1</span>
+								</div>
+								<div className="mechanical-part">
+									<h3>Frame</h3>
+									<span>4</span>
+								</div>
+							</div>
+							<i class="fas fa-3x fa-arrow-circle-right green"></i>
+							<div className="after">
+								<div className="mechanical-part maintenance-danger">
+									<h3>Tires</h3>
+									<span>54</span>
+								</div>
+								<div className="mechanical-part maintenance-warning">
+									<h3>Shock Absorber</h3>
+									<span>26</span>
+								</div>
+								<div className="mechanical-part maintenance-ok">
+									<h3>Engine</h3>
+									<span>1</span>
+								</div>
+								<div className="mechanical-part maintenance-ok">
+									<h3>Frame</h3>
+									<span>4</span>
+								</div>
+							</div>
+						</div>
+					</div>
         </div>
       </div>
     )

@@ -11,7 +11,7 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      view: 'video'
+      view: 'directions'
     }
 
     this.handleView = this.handleView.bind(this);

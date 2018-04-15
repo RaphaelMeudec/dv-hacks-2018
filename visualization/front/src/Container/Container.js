@@ -74,11 +74,11 @@ class Container extends React.Component {
 
   getColor(score) {
     if (score > 1) {
-      return "red";
+      return "#ED4337";
     } else if (score > 0) {
       return "orange";
     } else {
-      return "green";
+      return "#44c767";
     }
   }
 
@@ -133,7 +133,7 @@ class Container extends React.Component {
                     key={index}
                     color={this.state.colors[index]}
                     isDisplay={this.isLeafletCircleDisplayed(index)}
-                    fillColor={"red"}
+                    fillColor={"#ED4337"}
                     marker={marker}
                     popupText={"hello"}
                   />
