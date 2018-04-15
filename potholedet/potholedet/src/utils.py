@@ -137,5 +137,17 @@ def medianblur_transform(im):
     return im_mblur
 
 def get_score(im):
+    """Short summary.
 
-    return score
+    Parameters
+    ----------
+    im : np.array
+        original image.
+
+    Returns
+    -------
+    int
+        score.
+
+    """
+    return (im == 255).sum()
