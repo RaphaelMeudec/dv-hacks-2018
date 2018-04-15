@@ -1,11 +1,14 @@
 import React from 'react';
-import { Map, Polyline, TileLayer } from 'react-leaflet';
+import { Circle, Map, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
+import axios from 'axios';
 
 const gmaps = window.google.maps;
-const bcgDVCoordinates = [33.9008624,-118.394406];
-const laxCoordinates = [33.943574, -118.408165];
-const centerCoordinates = bcgDVCoordinates.map((val, index) => (val + laxCoordinates[index])/2);
+
+const startCoordinates = [41.0978156,-80.6790504];
+const endCoordinates = [41.0974208,-80.6798627];
+
+const centerCoordinates = startCoordinates.map((val, index) => (val + endCoordinates[index])/2);
 
 const flatten = array =>
 	Array.prototype.concat.apply([], array);
@@ -45,8 +48,8 @@ class DirectionsContainer extends React.Component {
 			waypoints: [],
 			positions: [
 				[
-					bcgDVCoordinates,
-					laxCoordinates
+					startCoordinates,
+					endCoordinates
 				]
 			]
 		};
@@ -54,6 +57,33 @@ class DirectionsContainer extends React.Component {
 
 	componentDidMount(){
 		this.getDirections([]);
+		this.retrieveScores();
+	}
+
+	retrieveScores() {
+		const coordinates = this.getMapBoundingPoints();
+
+		// const url = `http://localhost:5000/score/${coordinates.latitude1}/${coordinates.longitude1}/${coordinates.latitude2}/${coordinates.longitude2}`;
+		const url = 'http://localhost:5000/score';
+		console.log(url);
+    axios.get(url).then(response => console.log(response));
+	}
+
+	getMapBoundingPoints() {
+		const directionsMap = L.map('map').setView(centerCoordinates, 16)
+
+		const bounds = directionsMap.getBounds();
+		const northLatitude = bounds._northEast.lat;
+		const eastLongitude = bounds._northEast.lng;
+		const southLatitude = bounds._southWest.lat;
+		const westLongitude = bounds._southWest.lng;
+
+		return {
+			latitude1: southLatitude,
+			longitude1: westLongitude,
+			latitude2: northLatitude,
+			longitude2: eastLongitude
+		}
 	}
 
 	onWaypointsChange(waypoints, index){
@@ -75,9 +105,6 @@ class DirectionsContainer extends React.Component {
 				lf: 3,
 				Rb: snapIndex+1,
 				ue: zoom
-				//This is an undocumented feature of DirectionsService.
-				//It snaps the new waypoint to the nearest biggest road.
-				//those keys are linked to gmaps api v3.28.19. You can reverse-engineer any version by using a DirectionsRenderer
 			}
 		};
 		const directionsService = new gmaps.DirectionsService();
@@ -99,7 +126,7 @@ class DirectionsContainer extends React.Component {
     return (
       <div className="container">
         <div id="map">
-          <Map center={centerCoordinates} zoom={14}>
+          <Map center={centerCoordinates} zoom={16}>
             <TileLayer
               url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -107,9 +134,29 @@ class DirectionsContainer extends React.Component {
             <Polyline
     					positions={flattenPositions}
     					color={'black'}
-    					weight={14}
+    					weight={10}
     					opacity={0.5}
     				/>
+						<Circle
+							center={startCoordinates}
+							color="blue"
+							fillColor="blue"
+						 	opacity={0.8}
+						 	fillOpacity={0.8}>
+							<Popup>
+								<span>Start</span>
+							</Popup>
+						</Circle>
+						<Circle
+							center={endCoordinates}
+							color="blue"
+							fillColor="blue"
+						 	opacity={0.8}
+							fillOpacity={1}>
+							<Popup>
+		            <span>End</span>
+		          </Popup>
+						</Circle>
           </Map>
         </div>
         <div className='viewer'>

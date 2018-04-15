@@ -131,7 +131,7 @@ class Container extends React.Component {
         <div className='viewer'>
           <div className='video-container'>
             <video width="100%" ref="vidRef">
-              <source src="test.mp4" type="video/mp4"/>
+              <source src="potholes.mp4" type="video/mp4"/>
             Your browser does not support the video tag.
             </video>
           </div>
