@@ -3,6 +3,8 @@ import { Circle, Map, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
 import axios from 'axios';
 
+import LeafletCircle from './LeafletCircle';
+
 const gmaps = window.google.maps;
 
 const startCoordinates = [41.0978156,-80.6790504];
@@ -51,7 +53,8 @@ class DirectionsContainer extends React.Component {
 					startCoordinates,
 					endCoordinates
 				]
-			]
+			],
+			markers: []
 		};
   }
 
@@ -64,7 +67,7 @@ class DirectionsContainer extends React.Component {
 		const coordinates = this.getMapBoundingPoints();
 
 		const url = `http://localhost:5000/score/${coordinates.latitude1}/${coordinates.longitude1}/${coordinates.latitude2}/${coordinates.longitude2}`;
-    axios.get(url).then(response => console.log(response));
+    axios.get(url).then(response => this.setState({markers: response.data}));
 	}
 
 	getMapBoundingPoints() {
@@ -155,6 +158,21 @@ class DirectionsContainer extends React.Component {
 		            <span>End</span>
 		          </Popup>
 						</Circle>
+						{
+              this.state.markers.map((marker, index) => {
+								const position = [marker.latitude, marker.longitude];
+                return (
+                  <LeafletCircle
+                    color={"red"}
+                    isDisplay={true}
+                    fillColor={"red"}
+                    marker={position}
+										radius={10}
+                  />
+                )
+              })
+            }arker=
+						/>
           </Map>
         </div>
         <div className='viewer'>
