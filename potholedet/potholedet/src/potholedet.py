@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-import utils as ut
+from . import utils as ut
 
 class PotholeDetection(object):
     """ PotholeDetection object """
