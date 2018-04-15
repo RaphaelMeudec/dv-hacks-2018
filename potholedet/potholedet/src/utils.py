@@ -151,5 +151,5 @@ def get_score(im):
 
     """
     edge_l = (im == 255).sum()
-    edge_av = edge_l / (im.shape[0] * im.shape[1] )
+    edge_av = edge_l / (im.shape[0] * im.shape[1])
     return edge_av * 1000
