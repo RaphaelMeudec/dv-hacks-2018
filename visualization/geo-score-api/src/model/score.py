@@ -6,4 +6,4 @@ class Score(db.Model, BaseModel):
 
     latitude = db.Column(db.Float, primary_key=True)
     longitude = db.Column(db.Float, primary_key=True)
-    score = db.Column(db.Integer)
+    score = db.Column(db.Float)

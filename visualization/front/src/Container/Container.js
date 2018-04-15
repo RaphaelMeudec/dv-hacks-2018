@@ -4,17 +4,31 @@ import LeafletCircle from './LeafletCircle';
 
 import './Container.css';
 
-const bcgDVCoordinates = [33.9008624,-118.394406];
+const startCoordinates = [41.0978156,-80.6790504];
+const endCoordinates = [41.0974208,-80.6798627];
+
+const centerCoordinates = startCoordinates.map((val, index) => (val + endCoordinates[index])/2);
 
 const markersCoordinates = [
-  [33.902018,-118.394406],
-  [33.902018,-118.384416],
-  [33.902018,-118.374426],
-  [33.902018,-118.364436],
-  [33.902018,-118.354446],
-  [33.902018,-118.344456],
-  [33.902018,-118.334466],
-  [33.902018,-118.324476],
+  [41.097913,-80.681065,0.0],
+  [41.09803,-80.681063,0.0],
+  [41.098122,-80.681072,0.0],
+  [41.098147,-80.681044,1.0499475026248686],
+  [41.098149,-80.681011,0.0],
+  [41.098147999999995,-80.68096800000001,0.0],
+  [41.098146,-80.680921,1.4489348370927317],
+  [41.09814,-80.680853,0.0],
+  [41.098134,-80.680771,0.7865916379258184],
+  [41.098133000000004,-80.680702,2.098385944216962],
+  [41.098122,-80.680643,2.0376522702104096],
+  [41.098110999999996,-80.680543,0.9641262236417946],
+  [41.098099,-80.680456,1.2469111903162258],
+  [41.098045,-80.680089,0.0],
+  [41.098024,-80.679898,1.2402772237734343],
+  [41.097982,-80.679671,3.5357827754532773],
+  [41.097937,-80.679473,0.7556999067434158],
+  [41.097895,-80.679275,1.4738393515106853],
+  [41.097828,-80.679068,0.8322929671244278],
 ]
 
 class Container extends React.Component {
@@ -55,14 +69,16 @@ class Container extends React.Component {
   }
 
   getColors(scores) {
-    return scores.map(isRoadQualityGood => this.getColor(isRoadQualityGood));
+    return scores.map(score => this.getColor(score));
   }
 
-  getColor(isRoadQualityGood) {
-    if (isRoadQualityGood === true) {
-      return "green";
-    } else {
+  getColor(score) {
+    if (score > 1) {
       return "red";
+    } else if (score > 0) {
+      return "orange";
+    } else {
+      return "green";
     }
   }
 
@@ -79,13 +95,13 @@ class Container extends React.Component {
   }
 
   getScores(data) {
-    return data.map(position => this.getScore());
+    return data.map(marker => marker[2]);
   }
 
-  getScore() {
-    const score = Math.random();
-    return score > 0.5;
-  }
+  // getScore() {
+  //   const score = Math.random();
+  //   return score > 0.5;
+  // }
 
   handleClick() {
     this.setState(prevState => ({
@@ -105,7 +121,7 @@ class Container extends React.Component {
     return (
       <div className="container">
         <div id="map">
-          <Map center={bcgDVCoordinates} zoom={14}>
+          <Map center={centerCoordinates} zoom={16}>
             <TileLayer
               url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
