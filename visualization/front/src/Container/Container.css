@@ -25,7 +25,22 @@
   width: 100%;
 }
 
-.viewer button {
-  width: 100px;
-  padding: 8px 22px;
+.play-button {
+  float: left;
+  margin-top: 10px;
+  margin-left: 10px;
+  height: 40px;
+  background-color:#44c767;
+	-moz-border-radius:15px;
+	-webkit-border-radius:15px;
+	border-radius:15px;
+	border:1px solid #18ab29;
+  padding-left: 24px;
+  padding-right: 24px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #2f6627;
 }

@@ -133,7 +133,7 @@ class Container extends React.Component {
             Your browser does not support the video tag.
             </video>
           </div>
-          <button onClick={this.handleClick.bind(this)}>
+          <button className="play-button" onClick={this.handleClick.bind(this)}>
             {this.state.isPlaying ? 'Pause' : 'Play'}
           </button>
         </div>
