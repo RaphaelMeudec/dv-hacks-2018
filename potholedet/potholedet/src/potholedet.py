@@ -4,7 +4,16 @@ import pandas as pd
 import utils as ut
 
 class PotholeDetection(object):
+    """ PotholeDetection object """
     def __init__(self, dir_path):
+        """init function.
+
+        Parameters
+        ----------
+        dir_path : str
+            images directory path.
+
+        """
         if dir_path[-1] == '/':
             self.dir_path = dir_path
         else:
@@ -12,6 +21,14 @@ class PotholeDetection(object):
         self.im_paths = [el for el in os.listdir(dir_path) if '_crop.png' in el]
 
     def get_score(self):
+        """Calculate score of images.
+
+        Returns
+        -------
+        pd.DataFrame
+            dataframe of score per image.
+
+        """
         df_score = pd.DataFrame(columns=['im_id', 'score'])
         for im_p in self.im_paths:
             im = ut.read_im(self.dir_path + im_p)
@@ -22,5 +39,13 @@ class PotholeDetection(object):
         return df_score
 
     def dump_score(self, path):
+        """dump score file as csv.
+
+        Parameters
+        ----------
+        path : str
+            path to dump csv file.
+
+        """
         df_score = self.get_score()
         df_score.to_csv(path)
