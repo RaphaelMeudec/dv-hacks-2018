@@ -10,7 +10,9 @@ kindly install the requirements file by running the following command line in yo
 `pip install -r requirements.txt`
 
 ## Deployment
+By running the __main__.py file in [potholedet](https://github.com/RaphaelMeudec/dv-hacks-2018/tree/master/potholedet/potholedet) folder. This script takes as inpt the images crop in [data](https://github.com/RaphaelMeudec/dv-hacks-2018/tree/master/data) folder and dump a csv file with the GPS coordinates and the road score.
 
+`python __main__.py`
 
 ## Authors
 
