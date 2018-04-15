@@ -1,9 +1,10 @@
 import React from 'react';
-import { Circle, Map, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
+import { Circle, Map, Polyline, Popup, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
 import axios from 'axios';
 
 import LeafletCircle from './LeafletCircle';
+import { distance } from '../util';
 
 const gmaps = window.google.maps;
 
@@ -54,7 +55,8 @@ class DirectionsContainer extends React.Component {
 					endCoordinates
 				]
 			],
-			markers: []
+			markers: [],
+			alongTheRoadMarkers: []
 		};
   }
 
@@ -67,7 +69,8 @@ class DirectionsContainer extends React.Component {
 		const coordinates = this.getMapBoundingPoints();
 
 		const url = `http://localhost:5000/score/${coordinates.latitude1}/${coordinates.longitude1}/${coordinates.latitude2}/${coordinates.longitude2}`;
-    axios.get(url).then(response => this.setState({markers: response.data}));
+    axios.get(url).then(response => this.setState({markers: response.data}))
+									.then(() => this.getAlongTheRoadMarkers());
 	}
 
 	getMapBoundingPoints() {
@@ -85,6 +88,24 @@ class DirectionsContainer extends React.Component {
 			latitude2: northLatitude,
 			longitude2: eastLongitude
 		}
+	}
+
+	getAlongTheRoadMarkers() {
+		const flattenPositions = flatten(this.state.positions);
+
+		const validMarkers = this.state.markers.filter(marker => {
+			var isValid = false;
+			flattenPositions.forEach(position => {
+				isValid = isValid || this.isMarkerInRange(marker, position);
+			})
+			return isValid;
+		})
+
+		this.setState({alongTheRoadMarkers: validMarkers})
+	}
+
+	isMarkerInRange(marker, point) {
+		return distance(marker.latitude, marker.longitude, point[0], point[1]) < 0.2;
 	}
 
 	onWaypointsChange(waypoints, index){
@@ -119,10 +140,17 @@ class DirectionsContainer extends React.Component {
 		});
 	}
 
+	existsEnoughData() {
+		return (this.state.alongTheRoadMarkers) && (this.state.alongTheRoadMarkers.length > 0);
+	}
+
+	getRoadQuality() {
+		return this.state.alongTheRoadMarkers.filter(marker => marker.score < 0.1).length / this.state.alongTheRoadMarkers.length;
+	}
+
   render() {
-    const { waypoints, positions } = this.state;
+    const { positions } = this.state;
 		const flattenPositions = flatten(positions);
-		const bounds = L.latLngBounds(flattenPositions);
 
     return (
       <div className="container">
@@ -143,7 +171,8 @@ class DirectionsContainer extends React.Component {
 							color="blue"
 							fillColor="blue"
 						 	opacity={0.8}
-						 	fillOpacity={0.8}>
+						 	fillOpacity={0.8}
+							radius={10}>
 							<Popup>
 								<span>Start</span>
 							</Popup>
@@ -153,7 +182,8 @@ class DirectionsContainer extends React.Component {
 							color="blue"
 							fillColor="blue"
 						 	opacity={0.8}
-							fillOpacity={1}>
+							fillOpacity={1}
+							radius={10}>
 							<Popup>
 		            <span>End</span>
 		          </Popup>
@@ -163,6 +193,7 @@ class DirectionsContainer extends React.Component {
 								const position = [marker.latitude, marker.longitude];
                 return (
                   <LeafletCircle
+										key={index}
                     color={"red"}
                     isDisplay={true}
                     fillColor={"red"}
@@ -179,6 +210,11 @@ class DirectionsContainer extends React.Component {
           <h2>Road Analysis</h2>
           <p>Departure: BCG Digital Ventures</p>
           <p>Arrival: LAX International Airport</p>
+					<p>Road Quality: {
+						this.existsEnoughData()
+						? this.getRoadQuality()
+						: 'Not enough data to assess the road quality.'
+					}</p>
         </div>
       </div>
     )

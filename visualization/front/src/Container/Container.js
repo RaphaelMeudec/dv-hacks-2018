@@ -112,11 +112,9 @@ class Container extends React.Component {
             />
             {
               this.state.markers.map((marker, index) => {
-                const isRoadQualityGood = this.getScore();
-                const color = this.getColor(isRoadQualityGood);
-                const popupText = this.getPopupText(isRoadQualityGood);
                 return (
                   <LeafletCircle
+                    key={index}
                     color={this.state.colors[index]}
                     isDisplay={this.isLeafletCircleDisplayed(index)}
                     fillColor={"red"}
