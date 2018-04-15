@@ -29,13 +29,14 @@ class PotholeDetection(object):
             dataframe of score per image.
 
         """
-        df_score = pd.DataFrame(columns=['im_id', 'score'])
+        df_gps = pd.read_csv(self.dir_path + 'gps_coords.csv',header=None, index_col=0)
+        df_score = pd.DataFrame(columns=['latitude', 'longitude', 'score'])
         for im_p in self.im_paths:
             im = ut.read_im(self.dir_path + im_p)
             im_blur = ut.gaussianblur_transform(im)
             im_edges = ut.canny_transform(im_blur)
             score = ut.get_score(im_edges)
-            df_score = df_score.append({'im_id': im_p.split('_crop.png')[0], 'score': score}, ignore_index=True)
+            df_score = df_score.append({'latitude': df_gps.loc[im_p.split('_crop.png')[0]][1], 'longitude': df_gps.loc[im_p.split('_crop.png')[0]][2], 'score': score}, ignore_index=True)
         return df_score
 
     def dump_score(self, path):
@@ -48,4 +49,4 @@ class PotholeDetection(object):
 
         """
         df_score = self.get_score()
-        df_score.to_csv(path)
+        df_score.to_csv(path, index=None)
