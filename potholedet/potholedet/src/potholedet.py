@@ -10,15 +10,17 @@ class PotholeDetection(object):
         else:
             self.dir_path = dir_path + '/'
         self.im_paths = [el for el in os.listdir(dir_path) if '_crop.png' in el]
-        self.df_score = pd.DataFrame(columns=['im_id', 'score'])
 
     def get_score(self):
+        df_score = pd.DataFrame(columns=['im_id', 'score'])
         for im_p in self.im_paths:
             im = ut.read_im(self.dir_path + im_p)
             im_blur = ut.gaussianblur_transform(im)
             im_edges = ut.canny_transform(im_blur)
             score = ut.get_score(im_edges)
-            self.df_score = self.df_score.append({'im_id': im_p.split('_crop.png')[0], 'score': score}, ignore_index=True)
+            df_score = df_score.append({'im_id': im_p.split('_crop.png')[0], 'score': score}, ignore_index=True)
+        return df_score
 
     def dump_score(self, path):
-        self.df_score.to_csv(path)
+        df_score = self.get_score()
+        df_score.to_csv(path)
