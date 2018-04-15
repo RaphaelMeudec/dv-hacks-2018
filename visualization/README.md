@@ -28,8 +28,7 @@ This should launch a service on port 5000, with two available routes:
 - a global GET which retrieves all scores stored in the database
 - a region-oriented GET which retrieves scores in a bounding box (latitude1, longitude1) to (latitude2, longitude2)
 
-
-## Front-end 
+## Front-End
 
 ### Installation
 

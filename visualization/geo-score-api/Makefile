@@ -1,5 +1,10 @@
 install:
 	docker-compose run --rm server pip install -r requirements.txt --user --upgrade
+	docker-compose run --rm server python src/manage.py db init
+	docker-compose run --rm server python src/manage.py db migrate
+	docker-compose run --rm server python src/manage.py db upgrade
+	cp ../../data/images_score.csv .
+	docker exec -it geoscoreapi_db_1 psql -Upostgres -c "\\copy score FROM '/data/images_score.csv' WITH CSV"
 
 start:
 	docker-compose up server

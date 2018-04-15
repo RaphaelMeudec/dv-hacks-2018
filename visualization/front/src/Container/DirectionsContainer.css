@@ -1,0 +1,57 @@
+.directions {
+  display: flex;
+  width: 60%;
+  flex-direction: column;
+}
+
+.direction {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.direction .title {
+  font-weight: bold;
+}
+
+.mechanical-prediction {
+  margin-top: 30px;
+  width: 60%;
+}
+
+.mechanical-parts {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.green {
+  color: #44c767;
+}
+
+.before, .after {
+  display: flex;
+  flex-direction: column;
+}
+
+.mechanical-part {
+  margin-top: 10px;
+  width: 150px;
+  height: 100px;
+  line-height: 20px;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.maintenance-ok {
+  background-color: #44c767;
+}
+
+.maintenance-danger {
+  background-color: #ED4337;
+}
+
+.maintenance-warning {
+  background-color: orange;
+}

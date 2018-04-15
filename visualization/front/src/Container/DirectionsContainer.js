@@ -1,11 +1,19 @@
 import React from 'react';
-import { Map, Polyline, TileLayer } from 'react-leaflet';
+import { Circle, Map, Polyline, Popup, TileLayer } from 'react-leaflet';
 import L from 'leaflet';
+import axios from 'axios';
+
+import LeafletCircle from './LeafletCircle';
+import { distance } from '../util';
+
+import './DirectionsContainer.css';
 
 const gmaps = window.google.maps;
-const bcgDVCoordinates = [33.9008624,-118.394406];
-const laxCoordinates = [33.943574, -118.408165];
-const centerCoordinates = bcgDVCoordinates.map((val, index) => (val + laxCoordinates[index])/2);
+
+const startCoordinates = [41.0976809,-80.6809661];
+const endCoordinates = [41.0978156,-80.6790504];
+
+const centerCoordinates = startCoordinates.map((val, index) => (val + endCoordinates[index])/2);
 
 const flatten = array =>
 	Array.prototype.concat.apply([], array);
@@ -45,15 +53,61 @@ class DirectionsContainer extends React.Component {
 			waypoints: [],
 			positions: [
 				[
-					bcgDVCoordinates,
-					laxCoordinates
+					startCoordinates,
+					endCoordinates
 				]
-			]
+			],
+			markers: [],
+			alongTheRoadMarkers: []
 		};
   }
 
 	componentDidMount(){
 		this.getDirections([]);
+		this.retrieveScores();
+	}
+
+	retrieveScores() {
+		const coordinates = this.getMapBoundingPoints();
+
+		const url = `http://localhost:5000/score/${coordinates.latitude1}/${coordinates.longitude1}/${coordinates.latitude2}/${coordinates.longitude2}`;
+    axios.get(url).then(response => this.setState({markers: response.data}))
+									.then(() => this.getAlongTheRoadMarkers());
+	}
+
+	getMapBoundingPoints() {
+		const directionsMap = L.map('map').setView(centerCoordinates, 16)
+
+		const bounds = directionsMap.getBounds();
+		const northLatitude = bounds._northEast.lat;
+		const eastLongitude = bounds._northEast.lng;
+		const southLatitude = bounds._southWest.lat;
+		const westLongitude = bounds._southWest.lng;
+
+		return {
+			latitude1: southLatitude,
+			longitude1: westLongitude,
+			latitude2: northLatitude,
+			longitude2: eastLongitude
+		}
+	}
+
+	getAlongTheRoadMarkers() {
+		const flattenPositions = flatten(this.state.positions);
+
+		const validMarkers = this.state.markers.filter(marker => {
+			var isValid = false;
+			flattenPositions.forEach(position => {
+				isValid = isValid || this.isMarkerInRange(marker, position);
+			})
+			return isValid;
+		})
+
+		this.setState({alongTheRoadMarkers: validMarkers})
+	}
+
+	isMarkerInRange(marker, point) {
+		return distance(marker.latitude, marker.longitude, point[0], point[1]) < 0.2;
 	}
 
 	onWaypointsChange(waypoints, index){
@@ -75,9 +129,6 @@ class DirectionsContainer extends React.Component {
 				lf: 3,
 				Rb: snapIndex+1,
 				ue: zoom
-				//This is an undocumented feature of DirectionsService.
-				//It snaps the new waypoint to the nearest biggest road.
-				//those keys are linked to gmaps api v3.28.19. You can reverse-engineer any version by using a DirectionsRenderer
 			}
 		};
 		const directionsService = new gmaps.DirectionsService();
@@ -91,15 +142,32 @@ class DirectionsContainer extends React.Component {
 		});
 	}
 
+	existsEnoughData() {
+		return (this.state.alongTheRoadMarkers) && (this.state.alongTheRoadMarkers.length > 0);
+	}
+
+	getRoadQuality() {
+		return this.state.alongTheRoadMarkers.filter(marker => marker.score < 0.1).length / this.state.alongTheRoadMarkers.length;
+	}
+
+	getColor(score) {
+    if (score > 1) {
+      return "#ED4337";
+    } else if (score > 0) {
+      return "orange";
+    } else {
+      return "#44c767";
+    }
+  }
+
   render() {
-    const { waypoints, positions } = this.state;
+    const { positions } = this.state;
 		const flattenPositions = flatten(positions);
-		const bounds = L.latLngBounds(flattenPositions);
 
     return (
       <div className="container">
         <div id="map">
-          <Map center={centerCoordinates} zoom={14}>
+          <Map center={centerCoordinates} zoom={18}>
             <TileLayer
               url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -107,15 +175,108 @@ class DirectionsContainer extends React.Component {
             <Polyline
     					positions={flattenPositions}
     					color={'black'}
-    					weight={14}
-    					opacity={0.5}
+    					weight={15}
+    					opacity={0.9}
     				/>
+						<Circle
+							center={startCoordinates}
+							color="blue"
+							fillColor="blue"
+						 	opacity={0.8}
+						 	fillOpacity={0.8}
+							radius={10}>
+							<Popup>
+								<span>Start</span>
+							</Popup>
+						</Circle>
+						<Circle
+							center={endCoordinates}
+							color="blue"
+							fillColor="blue"
+						 	opacity={0.8}
+							fillOpacity={1}
+							radius={10}>
+							<Popup>
+		            <span>End</span>
+		          </Popup>
+						</Circle>
+						{
+              this.state.markers.map((marker, index) => {
+								const position = [marker.latitude, marker.longitude];
+								const color = this.getColor(marker.score);
+                return (
+                  <LeafletCircle
+										key={index}
+                    color={color}
+                    isDisplay={true}
+                    fillColor={color}
+                    marker={position}
+										radius={7}
+                  />
+                )
+              })
+            }
+						/>
           </Map>
         </div>
         <div className='viewer'>
-          <h2>Road Analysis</h2>
-          <p>Departure: BCG Digital Ventures</p>
-          <p>Arrival: LAX International Airport</p>
+					<div className='directions'>
+          	<h2>Road Analysis</h2>
+						<div className='direction'>
+							<p class='title'>Departure</p>
+							<p>220-298 Milton Ave, Youngstown Ohio</p>
+						</div>
+						<div className='direction'>
+							<p class='title'>Arrival</p>
+							<p>Calvary Run Dr, Youngstown Ohio</p>
+						</div>
+					</div>
+					<div className='mechanical-prediction'>
+						<h2>Road Quality: {
+							this.existsEnoughData()
+							? this.getRoadQuality()
+							: 'Not enough data to assess the road quality.'
+						}</h2>
+						<div className="mechanical-parts">
+							<div className="before">
+								<div className="mechanical-part">
+									<h3>Tires</h3>
+									<span>51</span>
+								</div>
+								<div className="mechanical-part">
+									<h3>Shock Absorber</h3>
+									<span>25</span>
+								</div>
+								<div className="mechanical-part">
+									<h3>Engine</h3>
+									<span>1</span>
+								</div>
+								<div className="mechanical-part">
+									<h3>Frame</h3>
+									<span>4</span>
+								</div>
+							</div>
+							<i class="fas fa-3x fa-arrow-circle-right green"></i>
+							<div className="after">
+								<div className="mechanical-part maintenance-danger">
+									<h3>Tires</h3>
+									<span>54</span>
+								</div>
+								<div className="mechanical-part maintenance-warning">
+									<h3>Shock Absorber</h3>
+									<span>26</span>
+								</div>
+								<div className="mechanical-part maintenance-ok">
+									<h3>Engine</h3>
+									<span>1</span>
+								</div>
+								<div className="mechanical-part maintenance-ok">
+									<h3>Frame</h3>
+									<span>4</span>
+								</div>
+							</div>
+						</div>
+					</div>
         </div>
       </div>
     )
