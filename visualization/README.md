@@ -11,8 +11,8 @@ This directory tackles with client-side rendering. There are two parts for this 
 The API is implemented on a docker. To install and launch the API, follow these commands:
 
 ```
+cd visualization/geo-score-api
 make install
-make db/init
 ```
 
 
@@ -32,10 +32,11 @@ This should launch a service on port 5000, with two available routes:
 
 ### Installation
 
-To install all npm dependencies, use:
+To install all [npm](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-16-04) dependencies, use:
 
 ```
-yarn install
+cd ../front
+npm install
 ```
 
 ### Launching
@@ -43,7 +44,7 @@ yarn install
 Use the following command:
 
 ```
-yarn start
+npm start
 ```
 
 You should be able to access our demo on http://localhost:3000/
