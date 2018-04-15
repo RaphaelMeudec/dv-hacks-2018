@@ -63,9 +63,7 @@ class DirectionsContainer extends React.Component {
 	retrieveScores() {
 		const coordinates = this.getMapBoundingPoints();
 
-		// const url = `http://localhost:5000/score/${coordinates.latitude1}/${coordinates.longitude1}/${coordinates.latitude2}/${coordinates.longitude2}`;
-		const url = 'http://localhost:5000/score';
-		console.log(url);
+		const url = `http://localhost:5000/score/${coordinates.latitude1}/${coordinates.longitude1}/${coordinates.latitude2}/${coordinates.longitude2}`;
     axios.get(url).then(response => console.log(response));
 	}
 
