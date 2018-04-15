@@ -9,6 +9,7 @@ This package works Python 3.6.3.
 ## Installing
 Kindly install the requirements file by running the following command line in your terminal:
 ```
+cd potholedet
 pip install -r requirements.txt
 ```
 
@@ -16,6 +17,7 @@ pip install -r requirements.txt
 By running the `__main__.py` file in [potholedet](https://github.com/RaphaelMeudec/dv-hacks-2018/tree/master/potholedet/potholedet) folder. This script takes as inpt the images crop in [data](https://github.com/RaphaelMeudec/dv-hacks-2018/tree/master/data) folder and dump a csv file with the GPS coordinates and the road score.
 
 ```
+cd potholedet
 python __main__.py
 ```
 

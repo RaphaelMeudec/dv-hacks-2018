@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.misc import imread
-import matplotlib.pyplot as plt
 import cv2
 import pandas as pd
 
@@ -43,24 +42,6 @@ def rgb2gray(im):
     gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
     return gray
 
-def plot_im(im, mode='gray'):
-    """Ploting image.
-
-    Parameters
-    ----------
-    im : np.array
-        image array.
-    mode : str
-        Default is gray.
-
-    Returns
-    -------
-    type
-        Description of returned object.
-
-    """
-    plt.imshow(im, cmap=mode)
-    plt.show()
 
 def get_crop_pothole(im_atlas='positive_data/G0011595.JPG', crop_x=(1700,1800), crop_y=(2600,2850)):
     """crop image.
